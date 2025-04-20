@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Instagram</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Brute Force Instagram</h1>
+        <form id="bruteforce-form" method="POST">
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="wordlist">Wordlist :</label>
+            <input type="text" id="wordlist" name="wordlist" required>
+
+            <button type="submit">Démarrer l'attaque</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#bruteforce-form").on("submit", function(event) {
+                event.preventDefault();
+
+                const username = $("#username").val();
+                const wordlist = $("#wordlist").val();
+
+                $.ajax({
+                    url: '/start_bruteforce',
+                    method: 'POST',
+                    data: {
+                        username: username,
+                        wordlist: wordlist
+                    },
+                    success: function(response) {
+                        if(response.status === 'success') {
+                            $('#result').html(`<p><strong>Identifiants valides trouvés:</strong> ${response.valid_credentials}</p>`);
+                        } else {
+                            $('#result').html(`<p>${response.message}</p>`);
+                        }
+                    },
+                    error: function() {
+                        $('#result').html("<p>Une erreur est survenue lors de l'attaque.</p>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
